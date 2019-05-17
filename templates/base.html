@@ -2,11 +2,34 @@
 <html>
     <head>
         <title>Kevyn's Blog</title>
+        <style>
+            .error {
+                color: red;
+            }
+            .login {
+                float: right;
+            }
+        </style>
     </head>
 <body>
-<a href='/newpost'>Add a New Post</a>
-<a href='/blog'>View All Posts</a>
+<a href='/index'>Home</a>
+<a href='/blog'>All Posts</a>
+<a href='/newpost'>New Post</a>
+<div class="login">
+<a href='/login'>Log In</a>
+<a href='/logout'>Log Out</a>
+</div>
+
 <h1> <center>My Blog</center> </h1>
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        <ul>
+        {% for category,message in messages %}
+            <li class="{{category}}">{{message}}</li>
+        {% endfor %}
+        </ul>
+    {% endwith %}    
+
     {% block content %}
     {% endblock %}
 
