@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:abc123@localhost:3306/blogz'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz2:abc123@localhost:3306/blogz2'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 app.secret_key = 'abc123'
@@ -61,10 +61,13 @@ def newpost():
             db.session.add(new_post)
             db.session.commit()
             ids = new_post.id
+            owner_id = new_post.owner_id
             single_post = Blog.query.get(ids)
+            user_id = request.args.get('user')
+            owner_info = User.query.filter_by(id = user_id).first()
             users_posts = Blog.query.filter_by(owner_id=user_id).all()
-            author = User.query.filter_by(id = user_id).first()
-            return render_template('blog_post.html',single_post=single_post,user_id=user_id,author=author)
+            author = User.query.filter_by(id = owner_id).first()
+            return render_template('blog_post1.html',single_post=single_post,user_id=user_id,author=author,owner_id = owner_id)
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -141,11 +144,17 @@ def blog():
     user_id = request.args.get('user')
     users_posts = Blog.query.filter_by(owner_id=user_id).all()
     author_id = User.query.filter_by(id = user_id).first()
+    owner_info = User.query.filter_by(id = user_id).first()
+    ####blog_info = db.session.query(User).join(Blog).all()
+
 
 
     if post_id:
         single_post = Blog.query.get(post_id)
-        author = User.query.filter_by(id = post_id).first()
+        #author = User.query.filter_by(id = post_id).first()
+        author = User.query.filter_by(id = single_post.owner_id).first()
+        print (author)
+        print ('xxxxxxx')
         return render_template('blog_post.html',single_post=single_post, author=author, post_id=post_id)
 
     if user_id:
